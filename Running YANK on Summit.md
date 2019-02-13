@@ -28,7 +28,10 @@ wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-ppc64le.sh
 bash Miniconda3-latest-Linux-ppc64le.sh -b -p miniconda
 export PATH=$MEMBER_WORK/miniconda/bin:$PATH
 ```
+
 # Remove mpi4py and install special version for titan
+
+```bash
 # Make sure to remove glib, since it breaks `aprun`
 conda remove --yes --force glib mpi mpich mpi4py
 
@@ -38,7 +41,6 @@ wget https://bitbucket.org/mpi4py/mpi4py/downloads/mpi4py-3.0.0.tar.gz -O mpi4py
 tar zxf mpi4py-3.0.0.tar.gz
 cd mpi4py-3.0.0
 
-```bash
 cat >> mpi.cfg <<EOF
 # Summit spectrum MPI for gcc 8.1.1
 # ---------------------------------
