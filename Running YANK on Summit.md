@@ -20,7 +20,7 @@ export PROJECT_ARCHIVE="/proj/$PROJECT"
 # miniconda
 export PATH=$MEMBER_WORK/miniconda/bin:$PATH
 ```
-Now install miniconda for PPC:
+Now install miniconda for ppc64le:
 ```bash
 source ~/.bash_profile
 cd $MEMBER_WORK
@@ -29,14 +29,17 @@ bash Miniconda3-latest-Linux-ppc64le.sh -b -p miniconda
 export PATH=$MEMBER_WORK/miniconda/bin:$PATH
 ```
 
-# Remove mpi4py and install special version for titan
+# Install mpi4py using Summit MPI-enabled compilers
 
 ```bash
+# Install gcc 8 and corresponding MPI compilers
+module add gcc/8.1.1
+
 # Make sure to remove glib, since it breaks `aprun`
 conda remove --yes --force glib mpi mpich mpi4py
 
 # Build and install special mpi4py for titan
-cd $SOFTWARE
+cd $MEMBER_WORK
 wget https://bitbucket.org/mpi4py/mpi4py/downloads/mpi4py-3.0.0.tar.gz -O mpi4py-3.0.0.tar.gz
 tar zxf mpi4py-3.0.0.tar.gz
 cd mpi4py-3.0.0
