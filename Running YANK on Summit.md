@@ -37,8 +37,11 @@ export PATH=$MEMBER_WORK/miniconda/bin:$PATH
 ## YANK
 
 Install YANK and its dependencies
+```bash
+conda install --yes yank
+```
 
-** NOTE: This is currently not working because som dependencies are still being built. **
+** NOTE: This is currently not working because some dependencies are still being built for `ppc64le`. **
 
 ## mpi4py
 
