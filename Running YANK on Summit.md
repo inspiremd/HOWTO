@@ -1,3 +1,5 @@
+## Preliminaries
+
 Set up some paths. This can be in your `~/.bash_profile`:
 ```bash
 unset PYTHONPATH
@@ -20,7 +22,10 @@ export PROJECT_ARCHIVE="/proj/$PROJECT"
 # miniconda
 export PATH=$MEMBER_WORK/miniconda/bin:$PATH
 ```
-Now install miniconda for ppc64le:
+
+## Miniconda
+
+Install miniconda for ppc64le:
 ```bash
 source ~/.bash_profile
 cd $MEMBER_WORK
@@ -29,8 +34,15 @@ bash Miniconda3-latest-Linux-ppc64le.sh -b -p miniconda
 export PATH=$MEMBER_WORK/miniconda/bin:$PATH
 ```
 
-# Install mpi4py using Summit MPI-enabled compilers
+## YANK
 
+Install YANK and its dependencies
+
+** NOTE: This is currently not working because som dependencies are still being built. **
+
+## mpi4py
+
+Install mpi4py using Summit MPI-enabled compilers:
 ```bash
 # Install gcc 8 and corresponding MPI compilers
 module add gcc/8.1.1
@@ -56,3 +68,4 @@ EOF
 python setup.py build --mpi=summit
 python setup.py install
 ```
+
