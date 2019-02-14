@@ -1,3 +1,5 @@
+** NOT FINISHED YET -- DO NOT USE! **
+
 # Running YANK on Titan
 
 ## Installing OpenMM
