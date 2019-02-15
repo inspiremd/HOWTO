@@ -70,25 +70,23 @@ bash Miniconda3-latest-Linux-x86_64.sh -b -p miniconda
 ## Install OpenMM and omnia
 
 ```bash
-# If desired, create and activage a miniconda environment here
-#conda create --name yank
-#conda activate yank
 # Add omnia and conda-forge channels
 conda config --add channels omnia --add channels conda-forge
 # Install OpenMM for CUDA 9.1
 conda install -c omnia/label/cuda91 --yes openmm
 # Test installation interactively
 qsub -I -A $PROJECT -l nodes=1,walltime=00:30:00 -q debug
-module load python_anaconda
-module load cudatoolkit
+
+#module load cudatoolkit
 #conda activate yank
 #export PATH=/ccs/proj/$PROJECT/mskcc/miniconda/bin:$PATH
 #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/ccs/proj/<project_id>/mskcc/miniconda/lib
 #export PYTHONPATH=$PYTHONPATH:/ccs/proj/<project_id>/mskcc/miniconda/lib/python2.7/site-packages/
 #PYTHONPATH=$PYTHONPATH:/sw/xk6/python_anaconda/2.3.0/sles11.3_gnu4.8.2/lib/python2.7/site-packages/
 #export OPENMM_CUDA_COMPILER=/opt/nvidia/cudatoolkit7.5/7.5.18-1.0502.10743.2.1/bin/nvcc
-aprun -n1 python -m simtk.testInstallation
-exit
+
+aprun -n1 python -m simtk.testInstallation # launch test installation on compute node
+exit # leave environment 
 ```
 
 # Install YANK
