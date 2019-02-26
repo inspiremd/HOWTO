@@ -1,5 +1,3 @@
-** NOT FINISHED YET -- DO NOT USE! **
-
 # Running YANK on Titan
 
 This HOWTO describes how to get [YANK](http://getyank.org) up and running on [ORNL Titan](https://www.olcf.ornl.gov/olcf-resources/compute-systems/titan/).
@@ -16,6 +14,11 @@ if [[ `hostname -f` == *"titan"* ]]; then
   alias titan="ssh titan.ccs.ornl.gov"
 
   module add cudatoolkit/9.1.85_3.10-1.0502.df1cc54.3.1
+  
+  # We need the gcc programming environment for building mpi4py
+  module unload PrgEnv-pgi 
+  module load PrgEnv-gnu
+  module load cray-mpich
 
   # user-centric storage
   # https://www.olcf.ornl.gov/for-users/system-user-guides/titan/titan-user-guide/#user-centric-data-storage
@@ -153,4 +156,10 @@ EOF
 
 python setup.py build --mpi=cray
 python setup.py install
+```
+If the compilation step fails, make sure your `.bash_profile` correctly configured the `gcc` programming environment with:
+```bash
+module unload PrgEnv-pgi 
+module load PrgEnv-gnu
+module load cray-mpich
 ```
