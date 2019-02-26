@@ -76,21 +76,81 @@ conda config --add channels omnia --add channels conda-forge
 conda install -c omnia/label/cuda91 --yes openmm
 # Test installation interactively
 qsub -I -A $PROJECT -l nodes=1,walltime=00:30:00 -q debug
+# Change to a valid directory for aprun
+cd $MEMBER_WORK
+# Test the installation on a compute node
+aprun -n1 python -m simtk.testInstallation
+```
+This should produce output like
+```
+There are 4 Platforms available:
 
-#module load cudatoolkit
-#conda activate yank
-#export PATH=/ccs/proj/$PROJECT/mskcc/miniconda/bin:$PATH
-#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/ccs/proj/<project_id>/mskcc/miniconda/lib
-#export PYTHONPATH=$PYTHONPATH:/ccs/proj/<project_id>/mskcc/miniconda/lib/python2.7/site-packages/
-#PYTHONPATH=$PYTHONPATH:/sw/xk6/python_anaconda/2.3.0/sles11.3_gnu4.8.2/lib/python2.7/site-packages/
-#export OPENMM_CUDA_COMPILER=/opt/nvidia/cudatoolkit7.5/7.5.18-1.0502.10743.2.1/bin/nvcc
+1 Reference - Successfully computed forces
+2 CPU - Successfully computed forces
+3 CUDA - Successfully computed forces
+4 OpenCL - Successfully computed forces
 
-aprun -n1 python -m simtk.testInstallation # launch test installation on compute node
-exit # leave environment 
+Median difference in forces between platforms:
+
+Reference vs. CPU: 1.98163e-05
+Reference vs. CUDA: 2.15612e-05
+CPU vs. CUDA: 1.55631e-05
+Reference vs. OpenCL: 2.15471e-05
+CPU vs. OpenCL: 1.55066e-05
+CUDA vs. OpenCL: 1.29508e-07
+Application 19786782 resources: utime ~45s, stime ~2s, Rss ~336972, inblocks ~25570, outblocks ~25843
+```
+Run the benchmark
+```bash
+# Run the benchmark on a compute node
+cd $MINICONDA/share/openmm/examples
+aprun -n1 python benchmark.py --test=pme --platform=CUDA --seconds=30 --heavy-hydrogens --precision=mixed
+```
+which should produce something like
+```
+Platform: CUDA
+Precision: mixed
+
+Test: pme (cutoff=0.9)
+Step Size: 5 fs
+Integrated 13002 steps in 30.0585 seconds
+186.864 ns/day
+Application 19786796 resources: utime ~51s, stime ~6s, Rss ~359792, inblocks ~28001, outblocks ~25968
 ```
 
 # Install YANK
 
 ```bash
+# Install yank and dependencies
 conda install --yes yank
+```
+
+# TODO: Rebuild and reinstall mpi4py for cray
+```bash
+cd $MEMBER_WORK
+
+# Remove mpi4py and install special version for titan
+# Make sure to remove glib, since it breaks `aprun`
+conda remove --yes --force glib mpi mpich mpi4py
+
+# Build and install special mpi4py for titan
+cd $SOFTWARE
+wget https://bitbucket.org/mpi4py/mpi4py/downloads/mpi4py-3.0.0.tar.gz -O mpi4py-3.0.0.tar.gz
+tar zxf mpi4py-3.0.0.tar.gz
+cd mpi4py-3.0.0
+
+cat >> mpi.cfg <<EOF
+[cray]
+mpi_dir              = /opt/cray/mpt/7.6.3/gni/mpich-gnu/4.9/
+mpicc                = cc
+mpicxx               = CC
+extra_link_args      = -shared
+include_dirs         = %(mpi_dir)s/include
+libraries            = mpich
+library_dirs         = %(mpi_dir)s/lib/shared:%(mpi_dir)s/lib
+runtime_library_dirs = %(mpi_dir)s/lib/shared
+EOF
+
+python setup.py build --mpi=cray
+python setup.py install
 ```
